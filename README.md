@@ -1,1 +1,1 @@
-#GLife 
+http://curlybear.github.io/GLife 
