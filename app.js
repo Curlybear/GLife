@@ -65,6 +65,7 @@ function init() {
     var now;
     var elapsed;
 
+    drawGrid();
     draw();
 
     requestAnimationFrame(function animation() {
@@ -81,14 +82,15 @@ function init() {
     });
 }
 
-function rect(x,y,w,h) {
+function rect(x, y, w, h, ctx, style) {
+    ctx.fillStyle = style;
     ctx.beginPath();
     ctx.rect(x,y,w,h);
     ctx.closePath();
     ctx.fill();
 }
 
-function text(text, size, x, y, center) {
+function text(text, size, x, y, center, ctx) {
     ctx.font = size+"px Arial";
 
     if(center)
@@ -141,9 +143,23 @@ function draw() {
             if (world[i][j] == 1) {
                 rect((j * (CELLWIDTH + PADDING)) + PADDING,
                 (i * (CELLHEIGHT + PADDING)) + PADDING,
-                CELLWIDTH, CELLHEIGHT);
+                CELLWIDTH, CELLHEIGHT, ctx, "#000000");
             }
         }
+    }
+}
+
+function drawGrid() {
+    for (i=0; i < (NROWS+1); i++) {
+            rect(0,
+            (i * (CELLHEIGHT + PADDING)),
+            WIDTH, PADDING, ctxGrid, "#999999");
+    }
+
+    for (i=0; i < (NCOLS+1); i++) {
+            rect((i * (CELLWIDTH + PADDING)),
+            0,
+            PADDING, HEIGHT, ctxGrid, "#999999");
     }
 }
 
@@ -182,4 +198,4 @@ function coalesce (a, b) {
     return a === undefined ? b : a;
 }
 
-text("Click to start", 30, WIDTH/2, HEIGHT/2, true);
+text("Click to start", 30, WIDTH/2, HEIGHT/2, true, ctx);
