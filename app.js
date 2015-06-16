@@ -1,4 +1,5 @@
 var ctx = $('#canvas')[0].getContext("2d");
+var ctxGrid = $('#canvasGrid')[0].getContext("2d");
 var WIDTH = $("#canvas").width();
 var HEIGHT = $("#canvas").height();
 
@@ -118,7 +119,11 @@ function onMouseDown(evt) {
         if (evt.pageX > canvasMinX && evt.pageX < canvasMaxX) {
             var x = Math.round((HEIGHT-(HEIGHT-evt.pageY))/(CELLHEIGHT+PADDING))-1;
             var y = Math.round((WIDTH-(WIDTH-evt.pageX))/(CELLHEIGHT+PADDING))-1;
-            world[x][y] = 1;
+            if (world[x][y] == 1) {
+                world[x][y] = 0;
+            } else{
+                world[x][y] = 1;
+            }
             draw();
         }
     }
