@@ -1,7 +1,10 @@
-var ctx = $('#canvas')[0].getContext("2d");
-var ctxGrid = $('#canvasGrid')[0].getContext("2d");
-var WIDTH = $("#canvas").width();
-var HEIGHT = $("#canvas").height();
+var canvas = document.getElementById('canvas');
+var canvasGrid = document.getElementById('canvasGrid');
+
+var ctx = canvas.getContext("2d");
+var ctxGrid = canvasGrid.getContext("2d");
+var WIDTH;
+var HEIGHT;
 
 var canvasMinX;
 var canvasMaxX;
@@ -12,27 +15,36 @@ var NCOLS;
 var CELLWIDTH;
 var CELLHEIGHT;
 
-var parcoursX = 5;
-var parcoursY = 5;
-
 var started = false;
 var pause = false;
+
+// Chargement des handlers d'evenements
+window.addEventListener('load',initEventHandler,false);
+
+// Initialisation des handlers d'evenements
+function initEventHandler() {
+
+    document.getElementById('buttonClear').click( function(e) {
+        e.preventDefault();
+        resetWorld();
+    });
+
+    WIDTH = canvas.width = canvasGrid.width = canvas.clientWidth;
+    HEIGHT = canvas.height = canvasGrid.height = canvas.clientHeight;
+
+    text("Click to start", 30, WIDTH/2, HEIGHT/2, true, ctx);
+}
 
 function init() {
     started = true;
 
-    ctx = $('#canvas')[0].getContext("2d");
-    WIDTH = $("#canvas").width();
-    HEIGHT = $("#canvas").height();
-
-    CELLWIDTH = 20;
-    CELLHEIGHT = 20;
+    CELLWIDTH = 15;
+    CELLHEIGHT = 15;
     PADDING = 1;
 
     NROWS = Math.floor(HEIGHT/(CELLHEIGHT+PADDING));
     NCOLS = Math.floor(WIDTH/(CELLWIDTH+PADDING));
 
-    prevWorld = world;
     world = new Array(NROWS);
     for (i=0; i < NROWS; i++) {
         world[i] = new Array(NCOLS);
@@ -41,7 +53,7 @@ function init() {
         }
     }
 
-
+    // light some cells for test purposes
     world[11][5] = 1;
     world[9][5] = 1;
     world[10][5] = 1;
@@ -56,10 +68,10 @@ function init() {
 
     prevWorld = JSON.parse(JSON.stringify(world));
 
-    canvasMinX = $("#canvas").offset().left;
+    canvasMinX = canvas.offsetLeft;
     canvasMaxX = canvasMinX + WIDTH;
 
-    var fps = 5;
+    var fps = 10;
     var fpsInterval = 1000 / fps;
     var then = Date.now();
     var now;
@@ -115,8 +127,10 @@ function onKeyDown(evt) {
 }
 
 function onMouseDown(evt) {
-    if(!started)
+    if(!started){
+        console.log("YOU WOOT");
         init();
+    }
     else {
         if (evt.pageX > canvasMinX && evt.pageX < canvasMaxX) {
             var x = Math.round((HEIGHT-(HEIGHT-evt.pageY))/(CELLHEIGHT+PADDING))-1;
@@ -131,8 +145,8 @@ function onMouseDown(evt) {
     }
 }
 
-$(document).mousedown(onMouseDown);
-$(document).keydown(onKeyDown);
+document.addEventListener("mousedown", onMouseDown);
+document.addEventListener("keydown", onKeyDown);
 
 function draw() {
     clear();
@@ -194,8 +208,20 @@ function countNeighbours (x, y) {
         + coalesce(coalesce(prevWorld[x+1],0)[y+1], 0);
 }
 
+function resetWorld () {
+
+    world = new Array(NROWS);
+    for (i=0; i < NROWS; i++) {
+        world[i] = new Array(NCOLS);
+        for (j=0; j < NCOLS; j++) {
+            world[i][j] = 0;
+        }
+    }
+    prevWorld = JSON.parse(JSON.stringify(world));
+
+    draw();
+}
+
 function coalesce (a, b) {
     return a === undefined ? b : a;
 }
-
-text("Click to start", 30, WIDTH/2, HEIGHT/2, true, ctx);

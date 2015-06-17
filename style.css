@@ -1,3 +1,11 @@
+#game {
+    position: relative;
+    width: 900px;
+    height: 520px;
+}
+
 canvas {
+    width: inherit;
+    height: inherit;
     position: absolute;
 }
