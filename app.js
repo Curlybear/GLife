@@ -6,8 +6,8 @@ var ctxGrid = canvasGrid.getContext("2d");
 var WIDTH;
 var HEIGHT;
 
-var canvasMinX;
-var canvasMaxX;
+var canvasMinX, canvasMinY;
+var canvasMaxX, canvasMaxY;
 
 var world;
 var NROWS;
@@ -24,10 +24,7 @@ window.addEventListener('load',initEventHandler,false);
 // Initialisation des handlers d'evenements
 function initEventHandler() {
 
-    document.getElementById('buttonClear').click( function(e) {
-        e.preventDefault();
-        resetWorld();
-    });
+
 
     WIDTH = canvas.width = canvasGrid.width = canvas.clientWidth;
     HEIGHT = canvas.height = canvasGrid.height = canvas.clientHeight;
@@ -70,6 +67,8 @@ function init() {
 
     canvasMinX = canvas.offsetLeft;
     canvasMaxX = canvasMinX + WIDTH;
+    canvasMinY = canvas.offsetTop;
+    canvasMaxY = canvasMinY + HEIGHT;
 
     var fps = 10;
     var fpsInterval = 1000 / fps;
@@ -128,11 +127,10 @@ function onKeyDown(evt) {
 
 function onMouseDown(evt) {
     if(!started){
-        console.log("YOU WOOT");
         init();
     }
     else {
-        if (evt.pageX > canvasMinX && evt.pageX < canvasMaxX) {
+        if (evt.pageX > canvasMinX && evt.pageX < canvasMaxX && evt.pageY > canvasMinY && evt.pageY < canvasMaxY) {
             var x = Math.round((HEIGHT-(HEIGHT-evt.pageY))/(CELLHEIGHT+PADDING))-1;
             var y = Math.round((WIDTH-(WIDTH-evt.pageX))/(CELLHEIGHT+PADDING))-1;
             if (world[x][y] == 1) {
@@ -147,6 +145,7 @@ function onMouseDown(evt) {
 
 document.addEventListener("mousedown", onMouseDown);
 document.addEventListener("keydown", onKeyDown);
+document.getElementById('buttonClear').addEventListener("click", resetWorld);
 
 function draw() {
     clear();
@@ -209,7 +208,6 @@ function countNeighbours (x, y) {
 }
 
 function resetWorld () {
-
     world = new Array(NROWS);
     for (i=0; i < NROWS; i++) {
         world[i] = new Array(NCOLS);
